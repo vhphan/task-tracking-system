@@ -18,6 +18,7 @@ function getCookie(name) {
 
 function createInstance(baseURL) {
     console.log(baseURL);
+    console.log(getCookie('apiKey'));
 
     let headers = {
         'Content-Type': 'application/json',
@@ -26,7 +27,7 @@ function createInstance(baseURL) {
         headers = {
             ...headers,
             ...{
-                Api: import.meta.env.VITE_API_KEY,
+                api: getCookie('apiKey'),
                 Username: import.meta.env.VITE_USER_NAME,
             },
 
@@ -49,7 +50,6 @@ const addInterceptor = (instance) => {
     instance.interceptors.response.use(function (response) {
         return response;
     }, function (error) {
-        debugger;
         const errObj = error.toJSON();
         colorTrace('from axios.js', 'red');
         colorTrace(error, 'red');
@@ -90,7 +90,7 @@ const addInterceptor = (instance) => {
 
 const api = addInterceptor(createInstance(BASE_URL));
 
-// const apiNode = addInterceptor(createInstance(BASE_URL_NODE));
-const apiNode = createInstance(BASE_URL_NODE);
+const apiNode = addInterceptor(createInstance(BASE_URL_NODE));
+// const apiNode = createInstance(BASE_URL_NODE);
 
 export {api, apiNode, BASE_URL_NODE};

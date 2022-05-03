@@ -7,6 +7,7 @@
         class="q-gutter-md"
     >
       <q-input
+          class="q-mt-md"
           outlined
           v-model="email"
           label="Email"
@@ -15,6 +16,7 @@
       />
 
       <q-input
+          class="q-mt-md"
           outlined
           v-model="firstName"
           label="First Name"
@@ -24,6 +26,7 @@
       />
 
       <q-input
+          class="q-mt-md"
           outlined
           v-model="lastName"
           label="Last Name"
@@ -33,6 +36,7 @@
       />
 
       <q-select
+          class="q-mt-md"
           outlined
           v-model="userType"
           :options="[
@@ -46,11 +50,12 @@
       />
 
       <q-editor
+          class="q-mt-md"
           v-model="remarks"
           outlined
       />
 
-      <div>
+      <div class="q-mt-md">
         <q-btn label="Submit" type="submit" color="primary"/>
         <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm"/>
       </div>

@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="hHh LpR fFf">
+  <q-layout view="lHh LpR fFf">
 
     <q-header elevated class="bg-primary text-white" height-hint="98">
       <q-toolbar>
@@ -16,12 +16,11 @@
           <q-route-tab :to= "`${baseUrl}login`" label="Login"/>
         </q-tabs>
       </q-toolbar>
-
-
     </q-header>
 
     <q-drawer show-if-above v-model="leftDrawerOpen" side="left" bordered>
       <!-- drawer content -->
+      <side-bar />
     </q-drawer>
 
     <q-page-container>
@@ -33,12 +32,15 @@
 
 <script>
 import {ref} from 'vue'
+import SideBar from "../components/SideBar.vue";
 
 export default {
   name: 'MainLayout',
+  components: {SideBar},
   setup() {
     const leftDrawerOpen = ref(false)
     const baseUrl = import.meta.env.BASE_URL;
+
 
     return {
       leftDrawerOpen,

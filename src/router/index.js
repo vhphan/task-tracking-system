@@ -12,6 +12,24 @@ const routes = [
         component: Welcome
     },
     {
+        path: base + 'home',
+        name: 'Home',
+        component: () => import('../components/Home.vue')
+
+    },
+    {
+        path: base + 'settings',
+        name: 'Settings',
+        component: () => import('../components/Settings.vue')
+
+    },
+    {
+        path: base + 'users',
+        name: 'Users',
+        component: () => import('../components/Users.vue')
+
+    },
+    {
         path: base + "register",
         name: 'Register',
         component: Register,
