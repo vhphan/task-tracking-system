@@ -33,7 +33,7 @@ function createInstance(baseURL) {
 
         }
     } else if (baseURL === BASE_URL_NODE) {
-        headers = {...headers, Api: getCookie('API'), Username: `${getCookie('Name')}`}
+        headers = {...headers, Api: getCookie('apiKey'), Username: `${getCookie('Name')}`}
     }
     return axios.create({
         baseURL,
@@ -43,6 +43,10 @@ function createInstance(baseURL) {
 
 const addInterceptor = (instance) => {
     instance.interceptors.request.use((config) => {
+        console.log(config);
+        if (!config.headers.api || config.headers.api !== getCookie('apiKey')) {
+            config.headers.api = getCookie('apiKey');
+        }
         return config;
     }, (error) => {
         return Promise.reject(error);

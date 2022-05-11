@@ -2,6 +2,7 @@ import {createRouter, createWebHistory, createWebHashHistory} from 'vue-router';
 import Register from "../components/Register.vue";
 import Welcome from "../components/Welcome.vue";
 import Login from "../components/Login.vue";
+import {useMainStore} from "../stores/mainStore";
 
 const base = '/app/tts/';
 
@@ -28,6 +29,11 @@ const routes = [
         name: 'Users',
         component: () => import('../components/Users.vue')
 
+    }, {
+        path: base + 'tasks',
+        name: 'Tasks',
+        component: () => import('../components/Tasks.vue')
+
     },
     {
         path: base + "register",
@@ -47,6 +53,19 @@ const router = createRouter({
     history: createWebHistory(),
     mode: 'history',
     routes,
+})
+
+router.beforeEach(async (to, from) => {
+
+    const mainStore = useMainStore();
+    console.log(mainStore.loggedIn)
+
+    if ((to.name === 'Register' || to.name === 'Login') && !mainStore.loggedIn) {
+        return;
+    }
+    if (!mainStore.loggedIn) {
+        return {name: 'Login'}
+    }
 })
 
 export default router

@@ -1,7 +1,8 @@
-import { Notify } from 'quasar'
-export const useNotify = ()=>{
+import {Notify} from 'quasar'
 
-    const showError =  function(message) {
+export const useNotify = () => {
+
+    const showError = function (message) {
         Notify.create({
             message,
             color: 'negative',
@@ -14,8 +15,22 @@ export const useNotify = ()=>{
         })
     }
 
+    const showSuccess = function (message) {
+        Notify.create({
+            message,
+            color: 'positive',
+            actions: [
+                {
+                    label: 'Ok', color: 'white', handler: () => { /* ... */
+                    }
+                }
+            ]
+        })
+    }
+
     return {
-        showError
+        showError,
+        showSuccess
     }
 
 }

@@ -2,10 +2,9 @@
   <div class="q-pa-md absolute-center"
        style="min-width: 600px; max-width: 800px; background-color: rgba(206,212,206,0.35);">
 
-    <div v-if="!loggedIn">
+    <div>
 
       <q-header
-
           class="full-width q-pa-md q-ma-md"
           style="left: 0;"
       >LOGIN
@@ -46,19 +45,6 @@
 
     </div>
 
-    <div v-else>
-      <div>
-         You are logged in....
-      </div>
-      <div>
-        <q-btn
-            class="q-mt-lg"
-            label="Logout"
-            @click="logout"
-            color="primary"
-        />
-      </div>
-    </div>
   </div>
 </template>
 
@@ -70,6 +56,7 @@ import {setCookie} from "../utils/myFunctions";
 import {useQuasar} from "quasar";
 import {useMainStore} from "../stores/mainStore";
 import {storeToRefs} from "pinia";
+import router from "../router";
 
 export default {
   name: "Login",
@@ -105,6 +92,9 @@ export default {
                 color: 'positive',
               });
               mainStore.loggedIn = true;
+              mainStore.apiKey = res.data.apiKey;
+              mainStore.user = res.data.user;
+              router.push({name: 'Home'});
             }
 
 

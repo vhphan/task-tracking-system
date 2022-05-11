@@ -24,7 +24,10 @@
             <q-item v-for="([key, value]) in Object.entries(rowToEdit)">
               <q-item-section>
                 <q-item-label class="q-pb-xs">{{ key }}</q-item-label>
-                <q-input dense outlined v-model="rowToEdit[key]"/>
+
+                <q-select v-if="key==='active'" v-model="rowToEdit[key]" :options="['true', 'false']"/>
+                <q-input v-else dense outlined v-model="rowToEdit[key]"/>
+
               </q-item-section>
             </q-item>
 
@@ -57,51 +60,16 @@
 </template>
 
 <script>
-import {apiNode} from "../plugins/http";
-import {ref} from "vue";
+import {useAjaxTable} from "../composeables/ajaxTable";
 
 export default {
   name: "Users",
 
 
   setup() {
-    const users = ref([]);
-    const columns = ref([]);
 
-    apiNode.get('/users').then(res => {
-      users.value = res.data;
-      columns.value = Object.keys(res.data[0]).map(k => ({
-        name: k,
-        label: k,
-        field: k
-      }));
-      columns.value.push({
-        name: 'actions',
-        label: 'Actions',
-        field: 'actions',
-        sortable: false,
-        width: '100px'
-      });
-    });
-    const rowToEdit = ref({});
-    const showEditDialog = ref(false);
-
-    const editRow = (props) => {
-      console.log(props);
-      rowToEdit.value = props.row;
-      showEditDialog.value = true;
-    };
-
-    const deleteRow = (props) => {
-      console.log(props);
-    };
-
-    const updateRow = () => {
-      console.log(rowToEdit.value);
-      apiNode.put('/users/' + rowToEdit.value.id, rowToEdit.value).then(res => {
-        console.log(res);
-      });
-    };
+    const {columns, rows: users, showEditDialog, rowToEdit, editRow, deleteRow, updateRow, fetchData} = useAjaxTable('/users','/user', {})
+    fetchData();
 
     return {
       users,

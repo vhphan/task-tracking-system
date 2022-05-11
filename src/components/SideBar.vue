@@ -35,20 +35,17 @@ export default {
       {
         icon: 'settings',
         label: 'Settings',
-        separator: false,
+        separator: true,
         to: `${baseUrl}settings`
       },
-      // {
-      //   icon: 'feedback',
-      //   label: 'Send Feedback',
-      //   separator: false
-      // },
-      // {
-      //   icon: 'help',
-      //   iconColor: 'primary',
-      //   label: 'Help',
-      //   separator: false
-      // }
+
+      {
+        icon: 'task',
+        label: 'Tasks',
+        separator: true,
+        to: `${baseUrl}tasks`
+      },
+
     ]
 
     return {
