@@ -6,19 +6,17 @@
         <q-btn dense flat round icon="menu" @click="toggleLeftDrawer"/>
 
         <q-toolbar-title>
-          <q-avatar>
-            <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg">
-          </q-avatar>
-          Title
+          {{ currentRoute }}
         </q-toolbar-title>
         <q-tabs align="left">
           <q-route-tab :to="`${baseUrl}register`" label="Register"/>
           <q-route-tab v-if="!loggedIn" :to="`${baseUrl}login`" label="Login"/>
-          <q-route-tab v-else @click="loggedIn=false">Log Out</q-route-tab>
+          <q-route-tab v-else @click="logout">Log Out</q-route-tab>
         </q-tabs>
         <q-avatar v-if="loggedIn" color="purple" text-color="white" icon="person">
           <q-tooltip>
             {{ user['first_name'] }}
+            {{ user['user_type'] }}
           </q-tooltip>
 
         </q-avatar>
@@ -42,10 +40,15 @@
 </template>
 
 <script>
-import {ref} from 'vue'
+import {computed, ref, watch} from 'vue'
 import SideBar from "../components/SideBar.vue";
 import {useMainStore} from "../stores/mainStore";
 import {storeToRefs} from "pinia";
+import {useRoute} from "vue-router";
+import router from "../router";
+import {getCookie} from "../utils/myFunctions";
+import {apiNode} from "../plugins/http";
+import {setUserInitial} from "../composeables/auth";
 
 export default {
   name: 'MainLayout',
@@ -54,7 +57,28 @@ export default {
     const leftDrawerOpen = ref(false)
     const baseUrl = import.meta.env.BASE_URL;
     const mainStore = useMainStore()
-    const {loggedIn, user} = storeToRefs(mainStore)
+    const {loggedIn, user} = storeToRefs(mainStore);
+    const currentRoute = computed(() => {
+      return useRoute().name
+    });
+
+    watch(() => loggedIn, () => {
+      if (!loggedIn.value) {
+        router.push({name: 'Login'})
+      }
+    })
+
+    const apiKey = getCookie('apiKey');
+    console.log(apiKey);
+    if (apiKey && !loggedIn.value) {
+      apiNode.post('loginUserWithApiKey',
+          {
+            apiKey
+          }
+      ).then(res => {
+        setUserInitial(res, mainStore);
+      });
+    }
 
     return {
       leftDrawerOpen,
@@ -63,8 +87,12 @@ export default {
       },
       baseUrl,
       loggedIn,
-      user
-
+      user,
+      currentRoute,
+      logout() {
+        loggedIn.value = false;
+        router.push({name: 'Login'});
+      }
     }
   }
 }

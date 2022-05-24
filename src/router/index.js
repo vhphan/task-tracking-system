@@ -29,10 +29,17 @@ const routes = [
         name: 'Users',
         component: () => import('../components/Users.vue')
 
-    }, {
+    },
+    {
         path: base + 'tasks',
         name: 'Tasks',
         component: () => import('../components/Tasks.vue')
+
+    },
+    {
+        path: base + 'inactive',
+        name: 'Inactive',
+        component: () => import('../components/Inactive.vue')
 
     },
     {
@@ -58,14 +65,28 @@ const router = createRouter({
 router.beforeEach(async (to, from) => {
 
     const mainStore = useMainStore();
-    console.log(mainStore.loggedIn)
 
-    if ((to.name === 'Register' || to.name === 'Login') && !mainStore.loggedIn) {
+    if ((to.name === 'Register' || to.name === 'Login' || to.name=== 'Inactive') && !mainStore.loggedIn) {
         return;
     }
+
     if (!mainStore.loggedIn) {
         return {name: 'Login'}
     }
+
+    if (to.name=== 'Inactive') {
+        return;
+    }
+
+    if (mainStore.user && !mainStore.user['active']) {
+        return {
+            name: 'Inactive',
+            params: {
+                user: mainStore.user
+            }
+        }
+    }
+
 })
 
 export default router

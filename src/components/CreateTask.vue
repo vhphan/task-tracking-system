@@ -42,7 +42,9 @@
           </q-card-section>
         </q-card-section>
         <q-card-section style="margin-top: 1px; padding: 0;">
-          <q-date v-model="startAndEnd" range/>
+          <q-date v-model="startAndEnd" range :options="dateOptionsFn"/>
+
+
         </q-card-section>
       </q-card>
 
@@ -64,7 +66,8 @@ import {useQuasar} from "quasar";
 
 export default {
   name: "CreateTask",
-  setup() {
+  emits: ["submit", "reset"],
+  setup(props, {emit}) {
     const $q = useQuasar();
     const task = reactive({
       taskName: "",
@@ -75,24 +78,27 @@ export default {
     })
 
     const startAndEnd = computed({
-          get: () => ({
-            from: task.taskPlanStartDate,
-            to: task.taskPlanEndDate
-          }),
-          set: (value) => {
-            if (value === null) {
-              task.taskPlanStartDate = null;
-              task.taskPlanEndDate = null;
-              return;
-            }
-            task.taskPlanStartDate = value.from;
-            task.taskPlanEndDate = value.to;
-          }
+      get: () => ({
+        from: task.taskPlanStartDate,
+        to: task.taskPlanEndDate
+      }),
+      set: (value) => {
+        if (value === null) {
+          task.taskPlanStartDate = null;
+          task.taskPlanEndDate = null;
+          return;
         }
-    )
+        task.taskPlanStartDate = value.from;
+        task.taskPlanEndDate = value.to;
+      }
+    });
+
+    const dateOptionsFn = (date) => {
+      return date >= (new Date()).toISOString().slice(0, 10).replaceAll('-', '/');
+    }
 
     return {
-
+      dateOptionsFn,
       task,
       startAndEnd,
       onReset() {
@@ -111,8 +117,8 @@ export default {
             message: response.data.message,
             color: response.data.success ? "positive" : "negative"
           })
+          emit('submit');
         })
-
       }
     }
   },

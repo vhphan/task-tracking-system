@@ -17,8 +17,6 @@ function getCookie(name) {
 }
 
 function createInstance(baseURL) {
-    console.log(baseURL);
-    console.log(getCookie('apiKey'));
 
     let headers = {
         'Content-Type': 'application/json',
@@ -43,7 +41,6 @@ function createInstance(baseURL) {
 
 const addInterceptor = (instance) => {
     instance.interceptors.request.use((config) => {
-        console.log(config);
         if (!config.headers.api || config.headers.api !== getCookie('apiKey')) {
             config.headers.api = getCookie('apiKey');
         }
@@ -51,6 +48,7 @@ const addInterceptor = (instance) => {
     }, (error) => {
         return Promise.reject(error);
     });
+
     instance.interceptors.response.use(function (response) {
         return response;
     }, function (error) {

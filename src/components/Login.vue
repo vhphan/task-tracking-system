@@ -57,13 +57,13 @@ import {useQuasar} from "quasar";
 import {useMainStore} from "../stores/mainStore";
 import {storeToRefs} from "pinia";
 import router from "../router";
+import {setUserInitial} from "../composeables/auth";
 
 export default {
   name: "Login",
   setup() {
     const email = ref(null);
     const password = ref(null);
-    const $q = useQuasar();
     const mainStore = useMainStore();
     const {loggedIn} = storeToRefs(mainStore);
     const {showError} = useNotify();
@@ -76,32 +76,11 @@ export default {
         return emailPattern.test(val) || 'Invalid email';
       },
       onSubmit() {
-        console.log(email.value, password.value);
-
         apiNode.post('login', {
           email: email.value,
           password: password.value
         }).then(res => {
-          console.log(res.data);
-          if (res.data.apiKey) {
-            setCookie('apiKey', res.data.apiKey, 7);
-            if (res.data.success) {
-              $q.dialog({
-                title: 'Success',
-                message: 'You have successfully logged in',
-                color: 'positive',
-              });
-              mainStore.loggedIn = true;
-              mainStore.apiKey = res.data.apiKey;
-              mainStore.user = res.data.user;
-              router.push({name: 'Home'});
-            }
-
-
-          } else {
-            showError('Invalid email or password');
-          }
-
+          setUserInitial(res, mainStore);
         }).catch(err => {
           console.log(err);
           showError(err.message);

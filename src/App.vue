@@ -10,9 +10,9 @@ import {loadScript} from "./utils/myFunctions";
 const mainStore = useMainStore();
 const {loggedIn} = storeToRefs(mainStore);
 
-if (process.env.NODE_ENV === 'development') {
-  loadScript("http://localhost:8098");
-}
+// if (process.env.NODE_ENV === 'development') {
+//   loadScript("http://localhost:8098");
+// }
 
 mainStore.$subscribe((mutation, state) => {
   // mutation.type // 'direct' | 'patch object' | 'patch function'
