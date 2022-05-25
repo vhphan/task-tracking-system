@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {Notify} from "quasar";
+import {Notify, Dialog} from "quasar";
 import {colorTrace} from "../utils/myFunctions";
 
 
@@ -28,10 +28,15 @@ function createInstance(baseURL) {
                 api: getCookie('apiKey'),
                 Username: import.meta.env.VITE_USER_NAME,
             },
-
         }
     } else if (baseURL === BASE_URL_NODE) {
-        headers = {...headers, Api: getCookie('apiKey'), Username: `${getCookie('Name')}`}
+        headers = {
+            ...headers,
+            ...{
+                api: getCookie('apiKey'),
+                Username: `${getCookie('Name')}`
+            }
+        }
     }
     return axios.create({
         baseURL,
@@ -58,32 +63,32 @@ const addInterceptor = (instance) => {
         Notify.create({
             message: errObj.message,
             type: 'negative',
-            position: 'center',
+            position: 'bottom',
         })
         const {response} = error;
         if (!response) return Promise.reject(error);
 
         const errorMessage = response.data?.message || error.statusText;
-        Notify.create({
+        Dialog.create({
             message: errorMessage,
-            type: 'negative',
-            position: 'center',
+            color: 'negative',
+            title: 'Network Request Error',
         })
-        if ([401, 403].includes(response.status)) {
-            // redirectToLogin(error.message);
-            Notify.create({
-                message: 'You may be logged out!',
-                type: 'negative',
-                position: 'bottom'
-            })
-        }
-        if (response.status !== 200) {
-            Notify.create({
-                message: `Something went wrong. Status code ${response.status} ${response.statusText}`,
-                type: 'negative',
-                position: 'bottom'
-            })
-        }
+        // if ([401, 403].includes(response.status)) {
+        //     // redirectToLogin(error.message);
+        //     Dialog.create({
+        //         message: 'You may be logged out!',
+        //         color: 'negative',
+        //         title: 'Network Request Error'
+        //     })
+        // }
+        // if (response.status !== 200) {
+        //     Notify.create({
+        //         message: `Something went wrong. Status code ${response.status} ${response.statusText}`,
+        //         type: 'negative',
+        //         position: 'bottom'
+        //     })
+        // }
 
         return Promise.reject(error);
     });

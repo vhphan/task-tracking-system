@@ -3,6 +3,7 @@ import Register from "../components/Register.vue";
 import Welcome from "../components/Welcome.vue";
 import Login from "../components/Login.vue";
 import {useMainStore} from "../stores/mainStore";
+import About from "../components/About.vue";
 
 const base = '/app/tts/';
 
@@ -52,6 +53,12 @@ const routes = [
         path: base + "login",
         name: 'Login',
         component: Login,
+        props: {}
+    },
+    {
+        path: base + "about",
+        name: 'About',
+        component: About,
         props: {}
     },
 ]

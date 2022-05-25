@@ -47,6 +47,37 @@
           hint="User Type"
           label="User Type"
           :rules="[val => !!val || 'Select User Type']"
+          @update:model-value="onUserTypeChange"
+
+      />
+      <q-select
+          v-if="userType && (userType.value === 'pm' || userType.value === 'dt')"
+          class="q-mt-md"
+          outlined
+          v-model="aspId"
+          :options="asps"
+          label="Select ASP for this resource"
+          hint="Select ASP the resource is belongs to"
+      />
+
+      <q-select
+          v-if="userType && userType.value === 'pm'"
+          class="q-mt-md"
+          outlined
+          v-model="adminId"
+          :options="admins"
+          label="Select Admin for this PM"
+          hint="Select Admin the PM is assigned to"
+      />
+
+      <q-select
+          v-if="userType && userType.value === 'dt'"
+          class="q-mt-md"
+          outlined
+          v-model="pmId"
+          :options="pms"
+          label="Select PM for this DT"
+          hint="Select PM the DT is assigned to"
       />
 
       <q-editor
@@ -80,24 +111,71 @@ export default {
     const userType = ref(null);
     const remarks = ref('');
     const {showError} = useNotify();
+    const admins = ref([]);
+    const adminId = ref(null);
+    const pms = ref([]);
+    const pmId = ref(null);
+    const asps = ref([]);
+    const aspId = ref(null);
+
+    const getAdmins = async () => {
+      const {data} = await apiNode.get('/admins');
+      admins.value = data.data.map(admin => ({
+        label: admin['first_name'] + ' ' + admin['last_name'],
+        value: admin.id
+      }));
+    };
+
+    const getPms = async () => {
+      const {data} = await apiNode.get('/pms');
+      pms.value = data.data.map(pm => ({
+        label: pm['first_name'] + ' ' + pm['last_name'],
+        value: pm.id
+      }));
+    };
+
+    const getAsps = async () => {
+      const {data} = await apiNode.get('/asps');
+      asps.value = data.data.map(asp => ({
+        label: asp['name'],
+        value: asp.id
+      }));
+    };
 
     return {
+      aspId,
+      asps,
+      getAsps,
+      pms,
+      pmId,
+      getPms,
+      admins,
+      adminId,
+      getAdmins,
       email,
       firstName,
       lastName,
       userType,
       remarks,
       onSubmit() {
+        let postData = {
+          email: email.value,
+          firstName: firstName.value,
+          lastName: lastName.value,
+          userType: userType.value.value,
+          remarks: remarks.value
+        };
+        if (userType.value.value === 'pm') {
+          postData['aspId'] = aspId.value.value;
+          postData['adminId'] = adminId.value.value;
+        } else if (userType.value.value === 'dt') {
+          postData['aspId'] = aspId.value.value;
+          postData['pmId'] = pmId.value.value;
+        }
 
         apiNode.post(
             'user',
-            {
-              email: email.value,
-              firstName: firstName.value,
-              lastName: lastName.value,
-              userType: userType.value.value,
-              remarks: remarks.value
-            }
+            postData
         ).then(res => {
           console.log(res);
           $q.dialog({
@@ -111,18 +189,30 @@ export default {
         })
 
       },
-
       onReset() {
         firstName.value = null;
         lastName.value = null;
         email.value = null;
         userType.value = null;
       },
-
       isValidEmail(val) {
         const emailPattern = /^(?=[a-zA-Z0-9@._%+-]{6,254}$)[a-zA-Z0-9._%+-]{1,64}@(?:[a-zA-Z0-9-]{1,63}\.){1,8}[a-zA-Z]{2,63}$/;
         return emailPattern.test(val) || 'Invalid email';
+      },
+      onUserTypeChange(selectedUserType) {
+        console.log(userType);
+        if (selectedUserType.value === 'pm') {
+          getAdmins();
+        }
+        if (selectedUserType.value === 'dt') {
+          getPms();
+        }
+        if (['pm', 'dt'].includes(selectedUserType.value)) {
+          getAsps();
+        }
       }
+
+
     }
   }
 }

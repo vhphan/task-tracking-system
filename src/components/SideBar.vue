@@ -32,18 +32,24 @@ export default {
         to: `${baseUrl}users`
       },
 
-      {
-        icon: 'settings',
-        label: 'Settings',
-        separator: true,
-        to: `${baseUrl}settings`
-      },
+      // {
+      //   icon: 'settings',
+      //   label: 'Settings',
+      //   separator: true,
+      //   to: `${baseUrl}settings`
+      // },
 
       {
         icon: 'task',
         label: 'Tasks',
         separator: true,
         to: `${baseUrl}tasks`
+      },
+      {
+        icon: 'info',
+        label: 'About',
+        separator: true,
+        to: `${baseUrl}about`
       },
 
     ]

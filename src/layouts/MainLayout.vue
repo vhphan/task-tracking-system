@@ -8,6 +8,9 @@
         <q-toolbar-title>
           {{ currentRoute }}
         </q-toolbar-title>
+        <q-toolbar-title>
+          Alpha Version {{ version }}
+        </q-toolbar-title>
         <q-tabs align="left">
           <q-route-tab :to="`${baseUrl}register`" label="Register"/>
           <q-route-tab v-if="!loggedIn" :to="`${baseUrl}login`" label="Login"/>
@@ -54,6 +57,7 @@ export default {
   name: 'MainLayout',
   components: {SideBar},
   setup() {
+    const version = __APP_VERSION__;
     const leftDrawerOpen = ref(false)
     const baseUrl = import.meta.env.BASE_URL;
     const mainStore = useMainStore()
@@ -81,6 +85,7 @@ export default {
     }
 
     return {
+      version,
       leftDrawerOpen,
       toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value

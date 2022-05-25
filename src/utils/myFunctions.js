@@ -80,12 +80,12 @@ export function redirectToLogin(errorMessage) {
   Notify.create({
     message: errorMessage,
     type: 'negative',
-    position: 'center',
+    position: 'bottom',
   })
   Notify.create({
     message: 'Redirecting to Login Page in 5 seconds...',
     type: 'negative',
-    position: 'center',
+    position: 'bottom',
   })
   setTimeout(
     () => {
